@@ -14,24 +14,45 @@ public class Field {
     private final List<Actor> actors = new ArrayList<>();
 
     public Field(int width, int height) {
+        if (width <= 0 || height <= 0) {
+            throw new IllegalArgumentException(
+                "Field dimensions must be positive: got " + width + "x" + height);
+        }
         this.width = width;
         this.height = height;
         this.grid = new Actor[height][width];
     }
 
+    private boolean isValidLocation(Location location) {
+        int row = location.getRow();
+        int col = location.getCol();
+        return row >= 0 && row < height && col >= 0 && col < width;
+    }
+
+    private void checkLocation(Location location) {
+        if (!isValidLocation(location)) {
+            throw new InvalidLocationException(
+                "Location " + location + " is outside the field bounds ("
+                + width + "x" + height + ")");
+        }
+    }
+
     public void place(Actor actor, Location location) {
+        checkLocation(location);
         grid[location.getRow()][location.getCol()] = actor;
         actor.setLocation(location);
         actors.add(actor);
     }
 
     public void move(Actor actor, Location newLocation) {
+        checkLocation(newLocation);
         clear(actor.getLocation());
         grid[newLocation.getRow()][newLocation.getCol()] = actor;
         actor.setLocation(newLocation);
     }
 
     public Actor getActorAt(Location location) {
+        checkLocation(location);
         return grid[location.getRow()][location.getCol()];
     }
 
@@ -53,10 +74,9 @@ public class Field {
         for (int dr = -1; dr <= 1; dr++) {
             for (int dc = -1; dc <= 1; dc++) {
                 if (dr == 0 && dc == 0) continue;
-                int r = location.getRow() + dr;
-                int c = location.getCol() + dc;
-                if (r >= 0 && r < height && c >= 0 && c < width) {
-                    locations.add(new Location(r, c));
+                Location candidate = new Location(location.getRow() + dr, location.getCol() + dc);
+                if (isValidLocation(candidate)) {
+                    locations.add(candidate);
                 }
             }
         }
@@ -64,6 +84,7 @@ public class Field {
     }
 
     public void clear(Location location) {
+        checkLocation(location);
         grid[location.getRow()][location.getCol()] = null;
     }
 
