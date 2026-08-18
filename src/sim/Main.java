@@ -1,37 +1,46 @@
 package sim;
 
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
-        Field field = new Field(10, 10);
+        SwingUtilities.invokeLater(Main::runSimulation);
+    }
 
-        Rabbit r1 = new Rabbit();
-        Rabbit r2 = new Rabbit();
-        Fox f1 = new Fox();
+    private static void runSimulation() {
+        Field field = new Field(30, 20);
+        Random rand = new Random();
 
-        field.place(r1, new Location(2, 2));
-        field.place(r2, new Location(2, 3));
-        field.place(f1, new Location(5, 5));
+        for (int i = 0; i < 40; i++) {
+            field.place(new Rabbit(), randomFreeLocation(field, rand));
+        }
+        for (int i = 0; i < 8; i++) {
+            field.place(new Fox(), randomFreeLocation(field, rand));
+        }
 
-        for (int round = 1; round <= 20; round++) {
-            System.out.println("Round " + round);
-            for (Actor actor : new java.util.ArrayList<>(field.getActors())) {
+        SimulatorView view = new SimulatorView(field);
+
+        Timer timer = new Timer(300, e -> {
+            List<Actor> actorsCopy = new ArrayList<>(field.getActors());
+            for (Actor actor : actorsCopy) {
                 if (actor.isAlive()) {
                     actor.act(field);
-                    System.out.println("  " + actor.getClass().getSimpleName()
-                        + " at " + actor.getLocation());
                 }
             }
-        }
-        try {
-    field.place(new Rabbit(), new Location(100, 100));
-} catch (InvalidLocationException e) {
-    System.out.println("Caught expected error: " + e.getMessage());
-}
+            view.refresh();
+        });
+        timer.start();
+    }
 
-try {
-    Field badField = new Field(-5, 10);
-} catch (IllegalArgumentException e) {
-    System.out.println("Caught expected error: " + e.getMessage());
-}
-    }  
+    private static Location randomFreeLocation(Field field, Random rand) {
+        Location loc;
+        do {
+            loc = new Location(rand.nextInt(field.getHeight()), rand.nextInt(field.getWidth()));
+        } while (field.getActorAt(loc) != null);
+        return loc;
+    }
 }
