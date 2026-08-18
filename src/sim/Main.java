@@ -22,5 +22,16 @@ public class Main {
                 }
             }
         }
-    }
+        try {
+    field.place(new Rabbit(), new Location(100, 100));
+} catch (InvalidLocationException e) {
+    System.out.println("Caught expected error: " + e.getMessage());
+}
+
+try {
+    Field badField = new Field(-5, 10);
+} catch (IllegalArgumentException e) {
+    System.out.println("Caught expected error: " + e.getMessage());
+}
+    }  
 }
