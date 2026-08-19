@@ -26,6 +26,7 @@ public class Main {
     }
 }
 
+
     private static void runSimulation() {
         Field field = new Field(30, 20);
         Random rand = new Random();
