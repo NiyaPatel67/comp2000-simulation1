@@ -32,11 +32,13 @@ public class FieldCanvas extends JPanel {
     }
 
     private Color colorFor(Actor actor) {
-        if (actor instanceof Fox) {
-            return Color.RED;
-        } else if (actor instanceof Rabbit) {
-            return new Color(70, 130, 180);
-        }
-        return Color.GRAY;
+    if (actor instanceof Fox) {
+        return Color.RED;
+    } else if (actor instanceof Rabbit) {
+        return new Color(70, 130, 180);
+    } else if (actor instanceof Plant) {
+        return new Color(34, 139, 34);
     }
+    return Color.GRAY;
+}
 }
