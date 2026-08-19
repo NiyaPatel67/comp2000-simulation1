@@ -25,7 +25,7 @@
 
 **Problems I hit / what I learned:**
 - Ran into `NoClassDefFoundError: wrong name` a few times when running a class
-  from inside its own package folder instead of from the source root — learned
+  from inside its own package folder instead of from the source root, learned
   that once a class declares `package sim;`, it has to be run as `sim.ClassName`
   from the parent of `sim/`, not from inside `sim/` itself. VS Code's Run
   codelens handles this automatically, which is why it worked there but not
