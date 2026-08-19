@@ -11,6 +11,21 @@ public class Main {
         SwingUtilities.invokeLater(Main::runSimulation);
     }
 
+    private static void demonstrateExceptionHandling() {
+    try {
+        new Field(-5, 10);
+    } catch (IllegalArgumentException e) {
+        System.out.println("Caught expected error: " + e.getMessage());
+    }
+
+    Field testField = new Field(5, 5);
+    try {
+        testField.getActorAt(new Location(100, 100));
+    } catch (InvalidLocationException e) {
+        System.out.println("Caught expected error: " + e.getMessage());
+    }
+}
+
     private static void runSimulation() {
         Field field = new Field(30, 20);
         Random rand = new Random();
