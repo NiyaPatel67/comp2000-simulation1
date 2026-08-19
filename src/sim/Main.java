@@ -15,6 +15,9 @@ public class Main {
         Field field = new Field(30, 20);
         Random rand = new Random();
 
+        for (int i = 0; i < 150; i++) {
+            field.place(new Plant(), randomFreeLocation(field, rand));
+        }
         for (int i = 0; i < 40; i++) {
             field.place(new Rabbit(), randomFreeLocation(field, rand));
         }
