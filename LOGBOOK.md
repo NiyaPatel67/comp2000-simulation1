@@ -1,4 +1,4 @@
-# Log Book — COMP2000 Semester Project
+# Log Book — COMP2000 Worksheet 2 (Weeks 7–13)
 
 ## 19/08/2026 — Project setup, core hierarchy, exceptions, GUI
 
