@@ -9,7 +9,8 @@
 
 **Signed:** Niya Patel
 
-## 15/10/2026 — Week 10: Project setup, core hierarchy, exceptions, GUI
+## 15/10/2026 — Week 10: Strategy pattern refactor
+git push
 
 - **What I did:** Replaced Fox's `huntRabbits()` and Rabbit's `eatPlant()` with one shared `eatNearbyFood()` in `Animal`, driven by a new `FeedingStrategy` interface. Fox and Rabbit now pass their diet in as a lambda (`food -> food instanceof Rabbit`), cutting each class to about 20 lines. I wrote, ran, and committed the refactor on a feature branch and merged it with PR #4, using Claude (AI) only to suggest where I could improve and help draft my log notes.
 - **Course topic:** Strategy pattern (composition over inheritance — an Animal *has* a diet rather than overriding a method for it), functional interfaces and lambdas.
