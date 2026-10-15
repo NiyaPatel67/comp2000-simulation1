@@ -1,6 +1,6 @@
 # Log Book — COMP2000 Worksheet 2 (Weeks 7–13)
 
-## 17/09/2026 — Week 9: Understanding the concepts and planning the design
+## 7/10/2026 — Week 9: Understanding the concepts and planning the design
 
 - **What I did:** Reviewed my last project feedback (54/100: missing class diagram, missing JFrame/JPanel/Exception inheritance, commits bunched on two days, only one log entry). Studied the Week 13 rubric and the course topics, then planned a 3-week design: Strategy (week 1), Observer + Iterator + streams with a live population graph (week 2), State + collectors + parallel stats (week 3).
 - **Course topic:** Strategy, Observer, Decorator, Iterator and State patterns; lambdas, stream pipelines and collectors. I compared Strategy against Template Method for removing the Fox/Rabbit duplication and chose Strategy because diet is a swappable behaviour (composition over inheritance). I decided not to force in Decorator, as nothing in my simulation naturally needs it.
@@ -9,7 +9,7 @@
 
 **Signed:** Niya Patel
 
-## 19/08/2026 — Week 10: Project setup, core hierarchy, exceptions, GUI
+## 15/10/2026 — Week 10: Project setup, core hierarchy, exceptions, GUI
 
 **What I did:**
 - Set up Java 21 + VS Code with the Java extension pack, confirmed the toolchain
