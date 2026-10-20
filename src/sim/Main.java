@@ -2,64 +2,58 @@ package sim;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class Main {
+    private static final int FIELD_WIDTH = 80;
+    private static final int FIELD_HEIGHT = 55;
+    private static final int STEP_DELAY_MS = 120;
+
     public static void main(String[] args) {
+        demonstrateExceptionHandling();
         SwingUtilities.invokeLater(Main::runSimulation);
     }
 
     private static void demonstrateExceptionHandling() {
-    try {
-        new Field(-5, 10);
-    } catch (IllegalArgumentException e) {
-        System.out.println("Caught expected error: " + e.getMessage());
+        try {
+            new Field(-5, 10);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Caught expected error: " + e.getMessage());
+        }
+
+        Field testField = new Field(5, 5);
+        try {
+            testField.getActorAt(new Location(100, 100));
+        } catch (InvalidLocationException e) {
+            System.out.println("Caught expected error: " + e.getMessage());
+        }
     }
 
-    Field testField = new Field(5, 5);
-    try {
-        testField.getActorAt(new Location(100, 100));
-    } catch (InvalidLocationException e) {
-        System.out.println("Caught expected error: " + e.getMessage());
+    /** Builds a field seeded with the starting populations. */
+    public static Field createField() {
+        Field field = new Field(FIELD_WIDTH, FIELD_HEIGHT);
+        seed(field, Plant::new, 1400);
+        seed(field, Rabbit::new, 300);
+        seed(field, Fox::new, 35);
+        return field;
     }
-}
 
+    /** Places `count` new actors made by `factory` on random free cells. */
+    private static void seed(Field field, Supplier<Actor> factory, int count) {
+        IntStream.range(0, count).forEach(i ->
+                field.randomFreeLocation().ifPresent(loc -> field.place(factory.get(), loc)));
+    }
 
     private static void runSimulation() {
-        Field field = new Field(30, 20);
-        Random rand = new Random();
+        Simulator simulator = new Simulator(createField());
 
-        for (int i = 0; i < 150; i++) {
-            field.place(new Plant(), randomFreeLocation(field, rand));
-        }
-        for (int i = 0; i < 40; i++) {
-            field.place(new Rabbit(), randomFreeLocation(field, rand));
-        }
-        for (int i = 0; i < 8; i++) {
-            field.place(new Fox(), randomFreeLocation(field, rand));
-        }
+        SimulatorView view = new SimulatorView(simulator.getField());
+        simulator.addObserver(view);
+        simulator.addObserver(view.getGraph());
+        simulator.addObserver(new ConsoleLogger(50));
 
-        SimulatorView view = new SimulatorView(field);
-
-        Timer timer = new Timer(300, e -> {
-            List<Actor> actorsCopy = new ArrayList<>(field.getActors());
-            for (Actor actor : actorsCopy) {
-                if (actor.isAlive()) {
-                    actor.act(field);
-                }
-            }
-            view.refresh();
-        });
+        Timer timer = new Timer(STEP_DELAY_MS, e -> simulator.step());
         timer.start();
-    }
-
-    private static Location randomFreeLocation(Field field, Random rand) {
-        Location loc;
-        do {
-            loc = new Location(rand.nextInt(field.getHeight()), rand.nextInt(field.getWidth()));
-        } while (field.getActorAt(loc) != null);
-        return loc;
     }
 }
