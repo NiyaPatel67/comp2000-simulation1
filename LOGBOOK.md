@@ -9,6 +9,7 @@
 
 **Signed:** Niya Patel
 
+
 ## 15/10/2026 — Week 10: Strategy pattern refactor
 git push
 
@@ -16,5 +17,15 @@ git push
 - **Course topic:** Strategy pattern (composition over inheritance — an Animal *has* a diet rather than overriding a method for it), functional interfaces and lambdas.
 - **What went wrong / confused me:** Animals that died of age or hunger were never removed from the grid, so dead rabbits blocked cells forever. Fixing that made the ecosystem collapse within ~40 steps instead. I also copied the new files in while still on `main` before creating my branch, and when I edited LOGBOOK.md on `main` before pulling the merged PR, git refused to pull until I saved my changes elsewhere — this overwrote an entry and I had to fix the log book afterwards.
 - **Connection to project:** This fixes the Fox/Rabbit duplication I flagged in my Week 7 worksheet, and the population crash is the problem I'll make visible in Week 11 with the Observer pattern and a population graph.
+
+**Signed:** Niya Patel
+
+
+## 20/10/2026 — Week 11: Observer pattern, Iterator and stream pipelines
+
+- **What I did:** Added a `Simulator` class that runs each step and notifies a list of `SimulationObserver`s. `SimulatorView`, a new `PopulationGraph` panel and a `ConsoleLogger` all register as observers, so the window, live fox/rabbit/plant graph and console report update after every step. Made `Field` implement `Iterable<Actor>` and rewrote `adjacentLocations()` and `freeAdjacentLocation()` as stream pipelines. Claude (AI) helped write the code; I ran it, committed it on `feature/observer-graph` and opened a PR.
+- **Course topic:** Observer pattern (one-to-many notification without tight coupling — `Simulator` doesn't know what its observers are), Iterator pattern (`FieldCanvas` loops `for (Actor a : field)` without seeing the internal list), stream pipelines (`filter`, `flatMap`, `collect`), `groupingBy` with `counting()` in `ConsoleLogger`, and method references like `this::isFree` and `PopulationStats::rabbits`.
+- **What went wrong / confused me:** The graph made the crash from Week 10 visible: rabbits boom at first, eat most of the plants, then crash, and the foxes starve shortly after — everything dies within about 50 steps. I also had to work out why `flatMap` was needed to build the neighbour list (two nested ranges of row/column offsets flattened into one stream of `Location`s).
+- **Connection to project:** The population graph is my "watchable emergent behaviour" for the uniqueness criterion, and it shows exactly what I need to fix in Week 12: the populations need to cycle instead of collapsing.
 
 **Signed:** Niya Patel
