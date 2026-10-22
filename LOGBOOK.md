@@ -21,6 +21,14 @@ git push
 **Signed:** Niya Patel
 
 
+## 20/10/2026 — Week 11: Observer pattern, Iterator and stream pipelines
+
+- **What I did:** Added a `Simulator` class that runs each step and notifies a list of `SimulationObserver`s. `SimulatorView`, a new `PopulationGraph` panel and a `ConsoleLogger` all register as observers, so the window, live fox/rabbit/plant graph and console report update after every step. Made `Field` implement `Iterable<Actor>` and rewrote `adjacentLocations()` and `freeAdjacentLocation()` as stream pipelines. Claude (AI) helped write the code; I ran it, committed it on `feature/observer-graph` and opened a PR.
+- **Course topic:** Observer pattern (one-to-many notification without tight coupling — `Simulator` doesn't know what its observers are), Iterator pattern (`FieldCanvas` loops `for (Actor a : field)` without seeing the internal list), stream pipelines (`filter`, `flatMap`, `collect`), `groupingBy` with `counting()` in `ConsoleLogger`, and method references like `this::isFree` and `PopulationStats::rabbits`.
+- **What went wrong / confused me:** The graph made the crash from Week 10 visible: every fox and rabbit was dead before step 50. After that, plants spread unchecked, from 226 at step 50 to over 2,500 by step 300, because nothing was left to eat them. I also had to work out why `flatMap` was needed to build the neighbour list (two nested ranges of row/column offsets flattened into one stream of `Location`s).
+- **Connection to project:** The population graph is my "watchable emergent behaviour" for the uniqueness criterion, and it shows exactly what I need to fix in Week 12: the populations need to cycle instead of collapsing.
+
+**Signed:** Niya Patel
 ## 22/10/2026 — Week 11: Testing loose coupling in the Observer pattern
 
 - **What I did:** Commented out the line that registers `ConsoleLogger` as an observer in `Main`, then re-ran the simulation. The window and population graph kept updating normally and only the console reports stopped. I didn't have to change `Simulator.java` at all. Then I restored the line and merged the Week 11 pull request (#5).
