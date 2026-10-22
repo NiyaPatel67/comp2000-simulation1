@@ -1,11 +1,21 @@
 package sim;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-public class Field {
+/**
+ * The grid the simulation runs on.
+ * Implements Iterable (Iterator pattern) so other classes can loop over the
+ * actors without ever seeing or modifying the internal list.
+ */
+public class Field implements Iterable<Actor> {
     private static final Random rand = new Random();
 
     private final int width;
@@ -56,31 +66,36 @@ public class Field {
         return grid[location.getRow()][location.getCol()];
     }
 
-    public Optional<Location> freeAdjacentLocation(Location location) {
-        List<Location> free = new ArrayList<>();
-        for (Location loc : adjacentLocations(location)) {
-            if (getActorAt(loc) == null) {
-                free.add(loc);
-            }
-        }
-        if (free.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(free.get(rand.nextInt(free.size())));
+    public boolean isFree(Location location) {
+        return getActorAt(location) == null;
     }
 
+    /** Stream pipeline: adjacent cells -> keep the empty ones -> pick one at random. */
+    public Optional<Location> freeAdjacentLocation(Location location) {
+        List<Location> free = adjacentLocations(location).stream()
+                .filter(this::isFree)
+                .collect(Collectors.toList());
+        return free.isEmpty()
+                ? Optional.empty()
+                : Optional.of(free.get(rand.nextInt(free.size())));
+    }
+
+    /** All in-bounds neighbours of a cell, built with nested IntStreams and flatMap. */
     public List<Location> adjacentLocations(Location location) {
-        List<Location> locations = new ArrayList<>();
-        for (int dr = -1; dr <= 1; dr++) {
-            for (int dc = -1; dc <= 1; dc++) {
-                if (dr == 0 && dc == 0) continue;
-                Location candidate = new Location(location.getRow() + dr, location.getCol() + dc);
-                if (isValidLocation(candidate)) {
-                    locations.add(candidate);
-                }
-            }
-        }
-        return locations;
+        return IntStream.rangeClosed(-1, 1).boxed()
+                .flatMap(dr -> IntStream.rangeClosed(-1, 1)
+                        .filter(dc -> dr != 0 || dc != 0)
+                        .mapToObj(dc -> new Location(location.getRow() + dr, location.getCol() + dc)))
+                .filter(this::isValidLocation)
+                .collect(Collectors.toList());
+    }
+
+    /** A random empty cell anywhere on the grid, if one exists after a few tries. */
+    public Optional<Location> randomFreeLocation() {
+        return Stream.generate(() -> new Location(rand.nextInt(height), rand.nextInt(width)))
+                .limit(50)
+                .filter(this::isFree)
+                .findFirst();
     }
 
     public void clear(Location location) {
@@ -93,7 +108,22 @@ public class Field {
         actors.remove(actor);
     }
 
-    public List<Actor> getActors() { return actors; }
+    /** Iterator pattern: callers can traverse actors but can't add or remove them. */
+    @Override
+    public Iterator<Actor> iterator() {
+        return Collections.unmodifiableList(actors).iterator();
+    }
+
+    /** A stream over the current actors, for stats and drawing. */
+    public Stream<Actor> stream() {
+        return actors.stream();
+    }
+
+    /** A snapshot copy, so actors can be born and die while we loop over this one. */
+    public List<Actor> snapshot() {
+        return new ArrayList<>(actors);
+    }
+
     public int getWidth() { return width; }
     public int getHeight() { return height; }
 }
