@@ -38,11 +38,11 @@ git push
 
 **Signed:** Niya Patel
 
-## 27/10/2026 — Week 12: State pattern for hungry and fed animals
+## 27/10/2026 — Week 12: Collectors, a custom Collector and parallel stats
 
-- **What I did:** Added an `AnimalState` interface with two states, `HungryState` (look for food, otherwise wander; no breeding) and `FedState` (wander and breed). `Animal.act()` now updates its state from its food level and calls `state.act(this, field)` instead of running one fixed sequence. `FieldCanvas` draws hungry rabbits paler so the state is visible on screen. Claude (AI) helped write the code; I ran it and committed it on `feature/state-pattern`.
-- **Course topic:** State pattern — an object changes its behaviour when its internal state changes. Both states are singletons, since they hold no data of their own.
-- **What went wrong / confused me:** I wasn't sure how State differs from Strategy, since both delegate to another object. The difference is who chooses: with Strategy, Fox and Rabbit pick their diet once when they're created; with State, the animal switches its own behaviour every turn as it gets hungry or eats. The ecosystem still crashed within about 100 steps.
-- **Connection to project:** Hungry animals no longer breed, which should slow the boom-and-crash I saw in Week 11. The State vs Strategy comparison is useful for worksheet question 1.3.
+- **What I did:** Wrote `PopulationStatsCollector`, a custom `Collector` that counts foxes, rabbits, plants and hungry animals and averages animal age in one pass. `Simulator` now builds each step's stats with `field.stream().parallel().collect(new PopulationStatsCollector())`. `ConsoleLogger` uses `partitioningBy(Animal::isHungry, counting())` for hungry vs fed and `groupingBy(..., summarizingInt(Animal::getAge))` for age stats per species. The status bar shows hungry animals and average age. Also added a few plant seedlings each step. Claude (AI) helped write the code; I ran it and committed it.
+- **Course topic:** Collectors — `groupingBy`, `partitioningBy`, downstream collectors, `summarizingInt`, and writing a custom `Collector` (supplier, accumulator, combiner, finisher). Parallel streams and thread safety.
+- **What went wrong / confused me:** Understanding why the parallel stream is safe. Each thread gets its own `Tally` from `supplier()`, fills it with `accumulator()`, and the partial tallies are merged by `combiner()`, so nothing is shared between threads. The stats step only *reads* the field. The main `act()` loop can't be parallel, because animals move and remove each other on the shared grid, which would be a race condition. The ecosystem still crashed within about 100 steps.
+- **Connection to project:** This is my main evidence for worksheet section 2 (custom collector, parallel stream with thread safety). The extra stats will help me tune the populations on Thursday.
 
 **Signed:** Niya Patel
