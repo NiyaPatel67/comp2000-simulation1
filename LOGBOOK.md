@@ -37,3 +37,12 @@ git push
 - **Connection to project:** This is my main evidence for worksheet question 1.3 (why Observer over calling the view directly). It also means in Week 12 I can add new statistics without editing `Simulator`'s loop.
 
 **Signed:** Niya Patel
+
+## 27/10/2026 — Week 12: State pattern for hungry and fed animals
+
+- **What I did:** Added an `AnimalState` interface with two states, `HungryState` (look for food, otherwise wander; no breeding) and `FedState` (wander and breed). `Animal.act()` now updates its state from its food level and calls `state.act(this, field)` instead of running one fixed sequence. `FieldCanvas` draws hungry rabbits paler so the state is visible on screen. Claude (AI) helped write the code; I ran it and committed it on `feature/state-pattern`.
+- **Course topic:** State pattern — an object changes its behaviour when its internal state changes. Both states are singletons, since they hold no data of their own.
+- **What went wrong / confused me:** I wasn't sure how State differs from Strategy, since both delegate to another object. The difference is who chooses: with Strategy, Fox and Rabbit pick their diet once when they're created; with State, the animal switches its own behaviour every turn as it gets hungry or eats. The ecosystem still crashed within about 100 steps.
+- **Connection to project:** Hungry animals no longer breed, which should slow the boom-and-crash I saw in Week 11. The State vs Strategy comparison is useful for worksheet question 1.3.
+
+**Signed:** Niya Patel
