@@ -33,8 +33,8 @@ public class SimulatorView extends JFrame implements SimulationObserver {
 
     @Override
     public void onStep(int step, Field field, PopulationStats stats) {
-        status.setText(String.format("Step %d   |   Foxes %d   Rabbits %d   Plants %d",
-                step, stats.foxes(), stats.rabbits(), stats.plants()));
+        status.setText(String.format("Step %d   |   Foxes %d   Rabbits %d   Plants %d   |   Hungry animals %d   |   Avg animal age %.1f",
+                step, stats.foxes(), stats.rabbits(), stats.plants(), stats.hungryAnimals(), stats.averageAnimalAge()));
         canvas.repaint();
     }
 }
