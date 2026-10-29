@@ -4,14 +4,16 @@ import java.util.Random;
 
 /**
  * Base class for every animal.
- * Strategy pattern: WHAT an animal eats is a FeedingStrategy object
- * (supplied as a lambda by each subclass), not hard-coded in a subclass method.
+ * Uses two design patterns:
+ *  - Strategy: WHAT it eats is a FeedingStrategy object (usually a lambda) passed in by the subclass.
+ *  - State:    HOW it behaves this turn depends on its current AnimalState (hungry or fed).
  */
 public abstract class Animal extends Actor {
     private static final Random rand = new Random();
 
     private int age = 0;
     private int foodLevel;
+    private AnimalState state = FedState.INSTANCE;
     private final FeedingStrategy diet;   // composition: the animal HAS a feeding strategy
     private final int foodValue;
 
@@ -29,14 +31,16 @@ public abstract class Animal extends Actor {
             field.removeActor(this);   // dead animals free up their cell
             return;
         }
-
-        if (!eatNearbyFood(field)) {
-            wander(field);
-        }
-        breed(field);
+        updateState();
+        state.act(this, field);        // behaviour depends on the current state
     }
 
-    /** One hunting method for every animal; the strategy decides what counts as food. */
+    /** Switch between Hungry and Fed based on how much food is left. */
+    private void updateState() {
+        state = (foodLevel <= foodValue / 2) ? HungryState.INSTANCE : FedState.INSTANCE;
+    }
+
+    /** Eat the first adjacent actor our feeding strategy accepts. Returns true if we ate. */
     boolean eatNearbyFood(Field field) {
         for (Location loc : field.adjacentLocations(getLocation())) {
             Actor actor = field.getActorAt(loc);
@@ -78,6 +82,8 @@ public abstract class Animal extends Actor {
 
     public int getAge() { return age; }
     public int getFoodLevel() { return foodLevel; }
+    public boolean isHungry() { return state == HungryState.INSTANCE; }
+    public AnimalState getState() { return state; }
 
     // Each species supplies its own numbers and offspring.
     protected abstract int getMaxAge();

@@ -1,11 +1,11 @@
 package sim;
 
 public class Fox extends Animal {
-    private static final int MAX_AGE = 150;
+    private static final int MAX_AGE = 70;
     private static final int BREEDING_AGE = 15;
-    private static final double BREEDING_PROBABILITY = 0.09;
-    private static final int MAX_LITTER_SIZE = 3;
-    private static final int RABBIT_FOOD_VALUE = 9;
+    private static final double BREEDING_PROBABILITY = 0.04;
+    private static final int MAX_LITTER_SIZE = 2;
+    private static final int RABBIT_FOOD_VALUE = 14;
 
     public Fox() {
         // The feeding strategy is a lambda: foxes eat rabbits.
