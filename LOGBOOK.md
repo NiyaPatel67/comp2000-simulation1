@@ -38,6 +38,14 @@ git push
 
 **Signed:** Niya Patel
 
+## 27/10/2026 — Week 12: State pattern for hungry and fed animals
+
+- **What I did:** Added an `AnimalState` interface with two states, `HungryState` (look for food, otherwise wander; no breeding) and `FedState` (wander and breed). `Animal.act()` now updates its state from its food level and calls `state.act(this, field)` instead of running one fixed sequence. `FieldCanvas` draws hungry rabbits paler so the state is visible on screen. Claude (AI) helped write the code; I ran it and committed it on `feature/state-pattern`.
+- **Course topic:** State pattern — an object changes its behaviour when its internal state changes. Both states are singletons, since they hold no data of their own.
+- **What went wrong / confused me:** I wasn't sure how State differs from Strategy, since both delegate to another object. The difference is who chooses: with Strategy, Fox and Rabbit pick their diet once when they're created; with State, the animal switches its own behaviour every turn as it gets hungry or eats. The ecosystem still crashed within about 100 steps.
+- **Connection to project:** Hungry animals no longer breed, which should slow the boom-and-crash I saw in Week 11. The State vs Strategy comparison is useful for worksheet question 1.3.
+
+**Signed:** Niya Patel
 ## 27/10/2026 — Week 12: Collectors, a custom Collector and parallel stats
 
 - **What I did:** Wrote `PopulationStatsCollector`, a custom `Collector` that counts foxes, rabbits, plants and hungry animals and averages animal age in one pass. `Simulator` now builds each step's stats with `field.stream().parallel().collect(new PopulationStatsCollector())`. `ConsoleLogger` uses `partitioningBy(Animal::isHungry, counting())` for hungry vs fed and `groupingBy(..., summarizingInt(Animal::getAge))` for age stats per species. The status bar shows hungry animals and average age. Also added a few plant seedlings each step. Claude (AI) helped write the code; I ran it and committed it.
