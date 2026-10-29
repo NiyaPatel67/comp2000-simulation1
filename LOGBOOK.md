@@ -54,3 +54,12 @@ git push
 - **Connection to project:** This is my main evidence for worksheet section 2 (custom collector, parallel stream with thread safety). The extra stats will help me tune the populations on Thursday.
 
 **Signed:** Niya Patel
+
+## 29/10/2026 — Week 12: Tuning the ecosystem for stable population cycles
+
+- **What I did:** Gave plants a random lifespan (30–70 steps) so they wither and leave space, and re-tuned the animals: foxes now live shorter (70 steps), breed less (0.04) and have smaller litters, but each rabbit feeds them for longer (14 steps); rabbits breed a bit less (0.10) but each plant feeds them for longer (12 steps). Claude (AI) helped test different parameter sets; I ran the final version and committed it.
+- **Course topic:** Emergent behaviour — none of the code says "make the populations cycle", but the interaction of simple rules produces predator–prey waves. The stats from my custom collector and the population graph were how I could tell whether a set of numbers worked.
+- **What went wrong / confused me:** Before this, plants filled every empty cell, so animals had nowhere to move or breed, and foxes always died out first. Small changes to one number could make the whole system crash or explode. [In my run, foxes and rabbits were still alive at step ___ and the graph showed ___.]
+- **Connection to project:** This is my "genuinely surprising outcome" for worksheet question 3.2: the population graph shows plants peak, then rabbits, then foxes, in repeating waves that I never coded directly.
+
+**Signed:** Niya Patel
