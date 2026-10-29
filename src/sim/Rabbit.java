@@ -3,9 +3,9 @@ package sim;
 public class Rabbit extends Animal {
     private static final int MAX_AGE = 40;
     private static final int BREEDING_AGE = 5;
-    private static final double BREEDING_PROBABILITY = 0.15;
-    private static final int MAX_LITTER_SIZE = 4;
-    private static final int PLANT_FOOD_VALUE = 6;
+    private static final double BREEDING_PROBABILITY = 0.10;
+    private static final int MAX_LITTER_SIZE = 3;
+    private static final int PLANT_FOOD_VALUE = 12;
 
     public Rabbit() {
         // The feeding strategy is a lambda: rabbits eat plants.
