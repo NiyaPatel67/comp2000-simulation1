@@ -1,17 +1,17 @@
 # Log Book — COMP2000 Worksheet 2 (Weeks 7–13)
 
-## 7/10/2026 — Week 9: Understanding the concepts and planning the design
+**Note on Weeks 8–9:** I didn't work on the project in the weeks around the mid-semester break. After receiving my Week 7 feedback (54/100), I restarted in Week 10 with a plan to commit and log consistently each week until submission.
 
-- **What I did:** Reviewed my last project feedback (54/100: missing class diagram, missing JFrame/JPanel/Exception inheritance, commits bunched on two days, only one log entry). Studied the Week 13 rubric and the course topics, then planned a 3-week design: Strategy (week 1), Observer + Iterator + streams with a live population graph (week 2), State + collectors + parallel stats (week 3).
+## 13/10/2026 — Week 10: Understanding the concepts and planning the design
+
+- **What I did:** Reviewed my Week 7 feedback (54/100: missing class diagram, missing JFrame/JPanel/Exception inheritance, commits bunched on two days, only one log entry). Studied the Week 13 rubric and the course topics, then planned a 3-week design: Strategy (Week 10), Observer + Iterator + streams with a live population graph (Week 11), State + collectors + parallel stats (Week 12).
 - **Course topic:** Strategy, Observer, Decorator, Iterator and State patterns; lambdas, stream pipelines and collectors. I compared Strategy against Template Method for removing the Fox/Rabbit duplication and chose Strategy because diet is a swappable behaviour (composition over inheritance). I decided not to force in Decorator, as nothing in my simulation naturally needs it.
 - **What confused me:** Whether to start a new simulation topic for better marks. I decided to extend my existing ecosystem so my log book and code connect across the semester. Working out where parallel streams could be used safely was also tricky: the main act() loop changes the shared grid, so only read-only work like statistics can run in parallel.
 - **Connection to project:** This plan directly addresses my Week 7 feedback: commit and log on several days each week, and produce a proper UML pattern diagram. Claude (AI) helped me plan and compare the options.
 
 **Signed:** Niya Patel
 
-
 ## 15/10/2026 — Week 10: Strategy pattern refactor
-git push
 
 - **What I did:** Replaced Fox's `huntRabbits()` and Rabbit's `eatPlant()` with one shared `eatNearbyFood()` in `Animal`, driven by a new `FeedingStrategy` interface. Fox and Rabbit now pass their diet in as a lambda (`food -> food instanceof Rabbit`), cutting each class to about 20 lines. Claude (AI) helped plan and write the refactor; I reviewed, ran and committed it on a feature branch and merged it with PR #4.
 - **Course topic:** Strategy pattern (composition over inheritance — an Animal *has* a diet rather than overriding a method for it), functional interfaces and lambdas.
@@ -19,7 +19,6 @@ git push
 - **Connection to project:** This fixes the Fox/Rabbit duplication I flagged in my Week 7 worksheet, and the population crash is the problem I'll make visible in Week 11 with the Observer pattern and a population graph.
 
 **Signed:** Niya Patel
-
 
 ## 20/10/2026 — Week 11: Observer pattern, Iterator and stream pipelines
 
@@ -29,11 +28,12 @@ git push
 - **Connection to project:** The population graph is my "watchable emergent behaviour" for the uniqueness criterion, and it shows exactly what I need to fix in Week 12: the populations need to cycle instead of collapsing.
 
 **Signed:** Niya Patel
+
 ## 22/10/2026 — Week 11: Testing loose coupling in the Observer pattern
 
 - **What I did:** Commented out the line that registers `ConsoleLogger` as an observer in `Main`, then re-ran the simulation. The window and population graph kept updating normally and only the console reports stopped. I didn't have to change `Simulator.java` at all. Then I restored the line and merged the Week 11 pull request (#5).
 - **Course topic:** Observer pattern — one-to-many notification without tight coupling. `Simulator` only knows about the `SimulationObserver` interface and loops `observers.forEach(o -> o.onStep(...))`, so observers can be added or removed without touching the subject.
-- **What confused me:** At first I expected removing an observer to break something in `Simulator`, because the console output used to come from inside the simulation loop. It helped to see that the subject doesn't care how many observers there are, or what they do.
+- **What confused me:** At first I expected removing an observer to break something in `Simulator`, because the console output used to come from inside the simulation loop. It helped to see that the subject doesn't care how many observers there are, or what they do. Re-running also showed the timing of the crash changes each run (some animals survived to step 50 this time), but the outcome was the same.
 - **Connection to project:** This is my main evidence for worksheet question 1.3 (why Observer over calling the view directly). It also means in Week 12 I can add new statistics without editing `Simulator`'s loop.
 
 **Signed:** Niya Patel
@@ -46,11 +46,12 @@ git push
 - **Connection to project:** Hungry animals no longer breed, which should slow the boom-and-crash I saw in Week 11. The State vs Strategy comparison is useful for worksheet question 1.3.
 
 **Signed:** Niya Patel
+
 ## 27/10/2026 — Week 12: Collectors, a custom Collector and parallel stats
 
 - **What I did:** Wrote `PopulationStatsCollector`, a custom `Collector` that counts foxes, rabbits, plants and hungry animals and averages animal age in one pass. `Simulator` now builds each step's stats with `field.stream().parallel().collect(new PopulationStatsCollector())`. `ConsoleLogger` uses `partitioningBy(Animal::isHungry, counting())` for hungry vs fed and `groupingBy(..., summarizingInt(Animal::getAge))` for age stats per species. The status bar shows hungry animals and average age. Also added a few plant seedlings each step. Claude (AI) helped write the code; I ran it and committed it.
 - **Course topic:** Collectors — `groupingBy`, `partitioningBy`, downstream collectors, `summarizingInt`, and writing a custom `Collector` (supplier, accumulator, combiner, finisher). Parallel streams and thread safety.
-- **What went wrong / confused me:** Understanding why the parallel stream is safe. Each thread gets its own `Tally` from `supplier()`, fills it with `accumulator()`, and the partial tallies are merged by `combiner()`, so nothing is shared between threads. The stats step only *reads* the field. The main `act()` loop can't be parallel, because animals move and remove each other on the shared grid, which would be a race condition. The ecosystem still crashed within about 100 steps.
+- **What went wrong / confused me:** Understanding why the parallel stream is safe. Each thread gets its own `Tally` from `supplier()`, fills it with `accumulator()`, and the partial tallies are merged by `combiner()`, so nothing is shared between threads. The stats step only *reads* the field. The main `act()` loop can't be parallel, because animals move and remove each other on the shared grid, which would be a race condition. The run behaved differently from before: foxes died out before step 100, but rabbits survived and boomed again (from 33 to over 300 by step 150), because the seedlings keep the plants topped up. So rabbits can now survive, but foxes can't.
 - **Connection to project:** This is my main evidence for worksheet section 2 (custom collector, parallel stream with thread safety). The extra stats will help me tune the populations on Thursday.
 
 **Signed:** Niya Patel
@@ -59,7 +60,7 @@ git push
 
 - **What I did:** Gave plants a random lifespan (30–70 steps) so they wither and leave space, and re-tuned the animals: foxes now live shorter (70 steps), breed less (0.04) and have smaller litters, but each rabbit feeds them for longer (14 steps); rabbits breed a bit less (0.10) but each plant feeds them for longer (12 steps). Claude (AI) helped test different parameter sets; I ran the final version and committed it.
 - **Course topic:** Emergent behaviour — none of the code says "make the populations cycle", but the interaction of simple rules produces predator–prey waves. The stats from my custom collector and the population graph were how I could tell whether a set of numbers worked.
-- **What went wrong / confused me:** Before this, plants filled every empty cell, so animals had nowhere to move or breed, and foxes always died out first. Small changes to one number could make the whole system crash or explode. [In my run, foxes and rabbits were still alive at step ___ and the graph showed ___.]
+- **What went wrong / confused me:** Before this, plants filled every empty cell, so animals had nowhere to move or breed, and foxes always died out first. Small changes to one number could make the whole system crash or explode. In my run, all three species were still alive at step 400. The graph showed plants peak first, then rabbits (1,884 at step 50) crash to 115 by step 100 as they ran out of food, then foxes peak at 181 around step 250 after the rabbits. After that the waves got smaller and the populations settled at around 120 foxes, 630 rabbits and 2,100 plants.
 - **Connection to project:** This is my "genuinely surprising outcome" for worksheet question 3.2: the population graph shows plants peak, then rabbits, then foxes, in repeating waves that I never coded directly.
 
 **Signed:** Niya Patel
