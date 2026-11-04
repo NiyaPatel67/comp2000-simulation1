@@ -64,3 +64,12 @@
 - **Connection to project:** This is my "genuinely surprising outcome" for worksheet question 3.2: the population graph shows plants peak, then rabbits, then foxes, in repeating waves that I never coded directly.
 
 **Signed:** Niya Patel
+
+## 04/11/2026 — Week 13: Worksheet draft and updated pattern diagram
+
+- **What I did:** Wrote all four sections of the final worksheet using snippets from my actual code and the population results from my 29/10 run, using Claude (AI) only to help draft the wording and point out where I could improve my explanations. Updated the UML pattern diagram so it shows the Java library inheritance I missed in Week 7 (`SimulatorView extends JFrame`, `FieldCanvas` and `PopulationGraph` extend `JPanel`, `InvalidLocationException extends RuntimeException`) and added it to the repo in `docs/`.
+- **Course topic:** Reviewing all the patterns together — Strategy, Observer, State and Iterator — and explaining the trade-off of each against an alternative. Also streams, collectors and thread safety for section 2.
+- **What went wrong / confused me:** Explaining State versus Strategy clearly, since both delegate to another object. I settled on: Strategy is chosen once from outside (the diet in the constructor), State is switched by the object itself every turn. I also realised the parallel stats stream probably doesn't make the program faster with only a few thousand actors, so I said that honestly in 2.3.
+- **Connection to project:** This produces two of my three submission files (worksheet and diagram) and directly addresses the Week 7 feedback about the missing diagram and missing JFrame/JPanel/Exception inheritance.
+
+**Signed:** Niya Patel
